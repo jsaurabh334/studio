@@ -4,7 +4,7 @@ import { projects } from "@/lib/data";
 import { ProjectHeader } from "./project-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleDollarSign, TrendingUp, Users } from "lucide-react";
-import { TaskList } from "./task-list";
+import { TaskGanttChart } from "./task-gantt-chart";
 import { ProjectSummary } from "./project-summary";
 
 export default function ProjectDetailsPage({
@@ -71,7 +71,7 @@ export default function ProjectDetailsPage({
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
-            <TaskList tasks={project.tasks} />
+            <TaskGanttChart tasks={project.tasks} />
         </div>
         <div className="lg:col-span-1 flex flex-col gap-8">
             <Card>
