@@ -95,7 +95,7 @@ export default function ContractorsPage() {
                     </TableCell>
                     <TableCell>{contractor.projectCount}</TableCell>
                     <TableCell>
-                      <ContractorActions />
+                      <ContractorActions contractor={contractor} />
                     </TableCell>
                   </TableRow>
                 );
