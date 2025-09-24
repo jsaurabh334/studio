@@ -30,8 +30,10 @@ export default function ProjectsPage() {
             Browse and manage all of your projects.
           </p>
         </div>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+        <Button asChild>
+          <Link href="/projects/new">
+            <PlusCircle className="mr-2 h-4 w-4" /> Add Project
+          </Link>
         </Button>
       </div>
       <Card>
@@ -88,5 +90,3 @@ export default function ProjectsPage() {
     </div>
   );
 }
-
-    
