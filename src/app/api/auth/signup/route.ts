@@ -28,24 +28,24 @@ export async function POST(request: Request) {
       name,
       email,
       password: hashedPassword,
-      role: 'Member', // Default role for new users
+      role: 'Admin', // Default role for new users
       createdAt: new Date(),
     });
 
     const user = {
-      id: result.insertedId,
+      _id: result.insertedId,
       name,
       email,
-      role: 'Member',
+      role: 'Admin',
     };
 
-    return NextResponse.json({ message: 'User created successfully', user });
+    return NextResponse.json({ message: 'User created successfully', user }, { status: 201 });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    console.error(error);
-    return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
+    console.error('Signup API Error:', error);
+    return NextResponse.json({ error: 'An internal server error occurred.' }, { status: 500 });
   }
 }

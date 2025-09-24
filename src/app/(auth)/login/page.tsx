@@ -53,8 +53,9 @@ export default function LoginPage() {
         body: JSON.stringify(values),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.error || 'Something went wrong');
       }
 
