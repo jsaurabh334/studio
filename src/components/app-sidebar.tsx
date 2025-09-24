@@ -8,6 +8,7 @@ import {
   Briefcase,
   CreditCard,
   LayoutDashboard,
+  LineChart,
   Users,
 } from "lucide-react";
 
@@ -46,6 +47,11 @@ const navItems = [
     href: "/payments",
     label: "Payments",
     icon: CreditCard,
+  },
+  {
+    href: "/reports",
+    label: "Reports",
+    icon: LineChart,
   },
   {
     href: "/alerts",
@@ -88,5 +94,3 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
-
-    
