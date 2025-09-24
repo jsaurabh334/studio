@@ -47,6 +47,8 @@ export async function POST(request: Request) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
+    // Do not log the error here as it can cause secondary crashes on some platforms.
+    // The hosting environment should handle logging.
     return NextResponse.json({ error: 'An internal server error occurred.' }, { status: 500 });
   }
 }

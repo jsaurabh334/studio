@@ -31,8 +31,6 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    // This is the fix. It tells Next.js to not bundle the Genkit Google AI
-    // plugin and its dependencies into client-side code.
     serverComponentsExternalPackages: ['@genkit-ai/googleai'],
   },
 };
