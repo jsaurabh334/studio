@@ -24,6 +24,10 @@ import { projects, recentActivities, contractors } from "@/lib/data";
 import { ProjectProgressChart } from "./charts";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 const totalBudget = projects.reduce((sum, p) => sum + p.budget, 0);
 const totalSpent = projects.reduce((sum, p) => sum + p.spent, 0);
@@ -140,6 +144,68 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+      <Card>
+        <CardHeader className="flex flex-row items-center">
+            <div className="grid gap-2">
+                <CardTitle>Active Projects</CardTitle>
+                <CardDescription>
+                    An overview of projects currently in progress.
+                </CardDescription>
+            </div>
+            <Link href="/projects" className={cn(buttonVariants({ variant: "outline" }), "ml-auto gap-1")}>
+                View All
+                <ArrowRight className="h-4 w-4" />
+            </Link>
+        </CardHeader>
+        <CardContent>
+        <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Project</TableHead>
+                <TableHead className="w-[250px]">Progress</TableHead>
+                <TableHead className="hidden md:table-cell">Status</TableHead>
+                <TableHead className="hidden md:table-cell">Budget</TableHead>
+                <TableHead>
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {projects.filter(p => p.status !== 'Completed').map((project) => (
+                <TableRow key={project.id}>
+                  <TableCell>
+                    <div className="font-medium">{project.name}</div>
+                    <div className="hidden text-sm text-muted-foreground md:inline">
+                      {project.id}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                        <Progress value={project.progress} className="h-2" />
+                        <span className="text-muted-foreground text-sm">{project.progress}%</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <Badge variant={project.status === 'On Track' ? 'secondary' : 'outline'} className={project.status === 'On Track' ? "bg-accent/80 text-accent-foreground" : "border-yellow-500/50 text-yellow-500"}>
+                      {project.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    ${project.spent.toLocaleString()} / ${project.budget.toLocaleString()}
+                  </TableCell>
+                  <TableCell>
+                    <Link href={`/projects/${project.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                        View
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }
+
+    

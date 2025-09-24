@@ -20,21 +20,17 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/logo";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
 
 const navItems = [
   {
     href: "/dashboard",
     label: "Dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    href: "/projects",
+    label: "Projects",
+    icon: Briefcase,
   },
   {
     href: "/contractors",
@@ -92,3 +88,5 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
+    
