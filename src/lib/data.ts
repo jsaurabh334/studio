@@ -1,9 +1,18 @@
 
+
 export type Task = {
   id: string;
   title: string;
   status: 'To Do' | 'In Progress' | 'Done';
   dueDate: string;
+}
+
+export type Expense = {
+  id: string;
+  category: 'Materials' | 'Labor' | 'Permits' | 'Equipment' | 'Other';
+  description: string;
+  amount: number;
+  date: string;
 }
 
 export type Project = {
@@ -16,6 +25,7 @@ export type Project = {
   status: 'On Track' | 'Delayed' | 'Completed';
   tasks: Task[];
   assignedContractors: string[]; // Array of contractor IDs
+  expenses: Expense[];
 };
 
 export type Contractor = {
@@ -70,7 +80,13 @@ export const projects: Project[] = [
       { id: 'TASK-103', title: 'Begin interior electrical wiring', status: 'To Do', dueDate: '2024-08-01' },
       { id: 'TASK-104', title: 'HVAC system installation for lower levels', status: 'In Progress', dueDate: '2024-08-10' },
     ],
-    assignedContractors: ['CONT-01', 'CONT-04']
+    assignedContractors: ['CONT-01', 'CONT-04'],
+    expenses: [
+        { id: 'EXP-001', category: 'Materials', description: 'Structural Steel Beams', amount: 1500000, date: '2024-06-15' },
+        { id: 'EXP-002', category: 'Labor', description: 'Q2 Contractor Payments', amount: 800000, date: '2024-06-30' },
+        { id: 'EXP-003', category: 'Permits', description: 'Building Permit Extension', amount: 25000, date: '2024-07-05' },
+        { id: 'EXP-004', category: 'Equipment', description: 'Crane Rental (July)', amount: 75000, date: '2024-07-10' },
+    ]
   },
   { 
     id: 'PROJ-002', 
@@ -85,7 +101,11 @@ export const projects: Project[] = [
       { id: 'TASK-202', title: 'Pour concrete for main support columns', status: 'In Progress', dueDate: '2024-07-30' },
       { id: 'TASK-203', title: 'Await delivery of prefabricated deck segments', status: 'To Do', dueDate: '2024-08-05' },
     ],
-    assignedContractors: ['CONT-02']
+    assignedContractors: ['CONT-02'],
+    expenses: [
+        { id: 'EXP-005', category: 'Materials', description: 'Reinforced Concrete', amount: 300000, date: '2024-07-01' },
+        { id: 'EXP-006', category: 'Labor', description: 'Engineering team salaries', amount: 150000, date: '2024-07-15' },
+    ]
   },
   { 
     id: 'PROJ-003', 
@@ -100,7 +120,8 @@ export const projects: Project[] = [
       { id: 'TASK-302', title: 'Conduct final unit inspections and punch lists', status: 'In Progress', dueDate: '2024-08-20' },
       { id: 'TASK-303', title: 'Obtain certificate of occupancy', status: 'To Do', dueDate: '2024-08-30' },
     ],
-    assignedContractors: ['CONT-01', 'CONT-02', 'CONT-04']
+    assignedContractors: ['CONT-01', 'CONT-02', 'CONT-04'],
+    expenses: []
   },
   { 
     id: 'PROJ-004', 
@@ -114,7 +135,8 @@ export const projects: Project[] = [
       { id: 'TASK-401', title: 'Install new playground equipment', status: 'Done', dueDate: '2024-06-15' },
       { id: 'TASK-402', title: 'Complete final project handover', status: 'Done', dueDate: '2024-07-01' },
     ],
-    assignedContractors: []
+    assignedContractors: [],
+    expenses: []
   },
 ];
 

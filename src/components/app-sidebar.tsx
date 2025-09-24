@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -12,6 +13,7 @@ import {
   Users,
   Settings,
 } from "lucide-react";
+import { alerts } from "@/lib/data";
 
 import {
   Sidebar,
@@ -58,6 +60,7 @@ const navItems = [
     href: "/alerts",
     label: "Alerts",
     icon: Bell,
+    badge: alerts.filter(a => !a.read).length
   },
    {
     href: "/settings",
@@ -91,6 +94,11 @@ export function AppSidebar() {
                 <Link href={item.href}>
                   <item.icon />
                   <span>{item.label}</span>
+                   {item.badge && item.badge > 0 ? (
+                    <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
+                        {item.badge}
+                    </span>
+                   ) : null}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
