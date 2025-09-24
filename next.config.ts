@@ -30,17 +30,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-   webpack: (config, { isServer }) => {
-    if (!isServer) {
-      // Exclude async_hooks from client-side bundle
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        async_hooks: false,
-      };
-    }
-
-    return config;
-  },
 };
 
 export default nextConfig;

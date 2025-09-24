@@ -4,20 +4,12 @@
 import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Project } from "@/lib/data";
+import { ProjectSummary } from "./project-summary";
+import { ExpenseTracker } from "./expense-tracker";
 
 const TaskGanttChart = dynamic(() => import("./task-gantt-chart").then(mod => mod.TaskGanttChart), {
   ssr: false,
   loading: () => <div className="h-[400px] w-full flex items-center justify-center"><p>Loading chart...</p></div>,
-});
-
-const ProjectSummary = dynamic(() => import("./project-summary").then(mod => mod.ProjectSummary), {
-  ssr: false,
-  loading: () => <div className="h-[200px] w-full flex items-center justify-center"><p>Loading summary...</p></div>,
-});
-
-const ExpenseTracker = dynamic(() => import("./expense-tracker").then(mod => mod.ExpenseTracker), {
-    ssr: false,
-    loading: () => <div className="h-[400px] w-full flex items-center justify-center"><p>Loading expenses...</p></div>,
 });
 
 export function ProjectDetailsClientLayout({ project }: { project: Project }) {
