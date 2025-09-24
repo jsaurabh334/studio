@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -33,8 +34,10 @@ export default function ContractorsPage() {
                 Manage your contractors and their profiles.
                 </p>
             </div>
-            <Button>
+            <Button asChild>
+              <Link href="/contractors/new">
                 <PlusCircle className="mr-2 h-4 w-4" /> Add Contractor
+              </Link>
             </Button>
         </div>
       </div>
