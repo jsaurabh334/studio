@@ -28,6 +28,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 const totalBudget = projects.reduce((sum, p) => sum + p.budget, 0);
 const totalSpent = projects.reduce((sum, p) => sum + p.spent, 0);
@@ -207,5 +208,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    
