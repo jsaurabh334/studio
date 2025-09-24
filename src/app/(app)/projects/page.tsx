@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -5,9 +6,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import {
   Table,
@@ -17,10 +15,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { projects } from "@/lib/data";
 import { Progress } from "@/components/ui/progress";
+import type { Project } from "@/lib/data";
 
-export default function ProjectsPage() {
+async function getProjects(): Promise<Project[]> {
+  // In a real app, this would be an API call.
+  // For now, we connect to the DB directly in this server component
+  // This is a temporary step until we build out the full API
+  try {
+     const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/projects`, { cache: 'no-store' });
+     if (!res.ok) {
+       console.error("Failed to fetch projects");
+       return [];
+     }
+     const data = await res.json();
+     return data.projects || [];
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return [];
+  }
+}
+
+
+export default async function ProjectsPage() {
+  const projects = await getProjects();
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center justify-between">
@@ -51,7 +70,7 @@ export default function ProjectsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {projects.map((project) => (
+              {projects && projects.length > 0 ? projects.map((project) => (
                 <TableRow key={project.id}>
                   <TableCell>
                     <div className="font-medium">{project.name}</div>
@@ -82,7 +101,13 @@ export default function ProjectsPage() {
                     </Link>
                   </TableCell>
                 </TableRow>
-              ))}
+              )) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    No projects found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </CardContent>
