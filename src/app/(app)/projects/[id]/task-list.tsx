@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import type { Task } from "@/lib/data";
+import { generateTasksForGoal } from "@/ai/flows/generate-tasks-flow";
 import {
   Card,
   CardContent,
@@ -20,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -40,6 +41,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const statusColors = {
   "To Do": "bg-gray-500/20 text-gray-400",
@@ -49,6 +53,9 @@ const statusColors = {
 
 export function TaskList({ tasks: initialTasks }: { tasks: Task[] }) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [goal, setGoal] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
 
   function handleAddTask() {
@@ -81,6 +88,36 @@ export function TaskList({ tasks: initialTasks }: { tasks: Task[] }) {
     toast({ title: "Task Deleted", description: `Task "${taskToDelete?.title}" has been removed.` });
   }
 
+  async function handleGenerateTasks() {
+    if (!goal) return;
+    setIsGenerating(true);
+    try {
+      const result = await generateTasksForGoal({ goal });
+      const newTasks = result.tasks.map(t => ({
+        id: `TASK-${Math.floor(Math.random() * 10000)}`,
+        title: t.title,
+        status: 'To Do' as const,
+        dueDate: new Date().toISOString().split('T')[0],
+      }));
+      setTasks(prev => [...newTasks, ...prev]);
+      toast({
+        title: "Tasks Generated!",
+        description: `${newTasks.length} new tasks have been added to your project.`,
+      });
+      setIsDialogOpen(false);
+      setGoal("");
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Generation Failed",
+        description: "There was an error generating tasks from your goal.",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -88,10 +125,48 @@ export function TaskList({ tasks: initialTasks }: { tasks: Task[] }) {
             <CardTitle>Tasks</CardTitle>
             <CardDescription>Manage the tasks for this project.</CardDescription>
         </div>
-        <Button variant="outline" size="sm" onClick={handleAddTask}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Task
-        </Button>
+        <div className="flex gap-2">
+           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Generate with AI
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Generate Tasks</DialogTitle>
+                <DialogDescription>
+                  Describe a high-level goal, and AI will create the tasks for you.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="goal" className="text-right">
+                    Goal
+                  </Label>
+                  <Input
+                    id="goal"
+                    value={goal}
+                    onChange={(e) => setGoal(e.target.value)}
+                    placeholder="e.g., 'Lay the building foundation'"
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleGenerateTasks} disabled={isGenerating}>
+                  {isGenerating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                  {isGenerating ? 'Generating...' : 'Generate'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Button variant="outline" size="sm" onClick={handleAddTask}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Task
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Table>
