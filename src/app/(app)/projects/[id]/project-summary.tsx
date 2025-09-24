@@ -65,7 +65,7 @@ export function ProjectSummary({ project }: { project: Project }) {
           <Alert variant="destructive">
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
-          </Aler>
+          </Alert>
         )}
 
         {!summary && !isLoading && (
