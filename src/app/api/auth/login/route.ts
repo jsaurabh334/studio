@@ -16,7 +16,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
 
-    const user = await db.collection('users').findOne({ email });
+    const user = await db.collection('users').findOne(
+        { email },
+        { projection: { name: 1, email: 1, password: 1, role: 1 } }
+    );
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
