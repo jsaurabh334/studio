@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     // In a real app, you would create a session/JWT here.
     // For now, we'll just return a success message.
     
-    return NextResponse.json({ message: 'Login successful', user: { name: user.name, email: user.email } });
+    return NextResponse.json({ message: 'Login successful', user: { name: user.name, email: user.email, role: user.role } });
 
   } catch (error) {
     if (error instanceof z.ZodError) {

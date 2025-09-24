@@ -34,13 +34,13 @@ const SettingsFormSchema = z.object({
 
 type SettingsFormValues = z.infer<typeof SettingsFormSchema>;
 
-// In a real app, this user data would come from a session or context
-const currentUser = {
-  name: "Admin User",
-  email: "admin@example.com",
-};
+type User = {
+    name: string;
+    email: string;
+    role: string;
+}
 
-export function SettingsForm() {
+export function SettingsForm({ user }: { user: User}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -49,8 +49,8 @@ export function SettingsForm() {
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(SettingsFormSchema),
     defaultValues: {
-      name: currentUser.name,
-      email: currentUser.email,
+      name: user.name,
+      email: user.email,
     },
   });
 

@@ -28,6 +28,7 @@ export async function POST(request: Request) {
       name,
       email,
       password: hashedPassword,
+      role: 'Member', // Default role for new users
       createdAt: new Date(),
     });
 
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
       id: result.insertedId,
       name,
       email,
+      role: 'Member',
     };
 
     return NextResponse.json({ message: 'User created successfully', user });
