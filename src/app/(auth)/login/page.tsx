@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { AuthCard, AuthCardContent, AuthCardHeader, AuthCardTitle, AuthCardDescription, AuthCardFooter } from "../auth-card";
 import Link from "next/link";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const LoginFormSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -29,31 +30,46 @@ type LoginFormValues = z.infer<typeof LoginFormSchema>;
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { toast } = useToast();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "admin@example.com",
+      password: "password",
     },
   });
 
   async function onSubmit(values: LoginFormValues) {
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    setError(null);
     
-    // In a real app, you would call your authentication service here.
-    // For now, we'll simulate a successful login.
-    
-    toast({
-        title: "Login Successful!",
-        description: "Welcome back!",
-    });
-    
-    setIsLoading(false);
-    router.push("/dashboard");
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      toast({
+          title: "Login Successful!",
+          description: "Welcome back!",
+      });
+      
+      router.push("/dashboard");
+
+    } catch (e: any) {
+        setError(e.message);
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (
@@ -67,6 +83,12 @@ export default function LoginPage() {
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <AuthCardContent className="space-y-4">
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertTitle>Login Failed</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
                 <FormField
                     control={form.control}
                     name="email"

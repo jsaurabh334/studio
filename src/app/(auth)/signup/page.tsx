@@ -19,6 +19,8 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { AuthCard, AuthCardContent, AuthCardHeader, AuthCardTitle, AuthCardDescription, AuthCardFooter } from "../auth-card";
 import Link from "next/link";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
 
 const SignupFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -30,6 +32,7 @@ type SignupFormValues = z.infer<typeof SignupFormSchema>;
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { toast } = useToast();
 
@@ -44,17 +47,32 @@ export default function SignupPage() {
 
   async function onSubmit(values: SignupFormValues) {
     setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    setError(null);
     
-    // In a real app, you would call your authentication service here.
-    
-    toast({
-        title: "Account Created!",
-        description: "You have been successfully signed up.",
-    });
-    
-    setIsLoading(false);
-    router.push("/dashboard");
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Something went wrong');
+      }
+      
+      toast({
+          title: "Account Created!",
+          description: "You have been successfully signed up.",
+      });
+      
+      router.push("/dashboard");
+
+    } catch (e: any) {
+        setError(e.message);
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (
@@ -68,6 +86,12 @@ export default function SignupPage() {
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <AuthCardContent className="space-y-4">
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertTitle>Signup Failed</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
                 <FormField
                     control={form.control}
                     name="name"
