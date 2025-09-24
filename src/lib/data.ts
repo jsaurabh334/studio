@@ -1,3 +1,4 @@
+
 export type Task = {
   id: string;
   title: string;
@@ -14,6 +15,7 @@ export type Project = {
   spent: number;
   status: 'On Track' | 'Delayed' | 'Completed';
   tasks: Task[];
+  assignedContractors: string[]; // Array of contractor IDs
 };
 
 export type Contractor = {
@@ -67,7 +69,8 @@ export const projects: Project[] = [
       { id: 'TASK-102', title: 'Install curtain wall panels (Floors 20-30)', status: 'In Progress', dueDate: '2024-08-15' },
       { id: 'TASK-103', title: 'Begin interior electrical wiring', status: 'To Do', dueDate: '2024-08-01' },
       { id: 'TASK-104', title: 'HVAC system installation for lower levels', status: 'In Progress', dueDate: '2024-08-10' },
-    ]
+    ],
+    assignedContractors: ['CONT-01', 'CONT-04']
   },
   { 
     id: 'PROJ-002', 
@@ -81,7 +84,8 @@ export const projects: Project[] = [
       { id: 'TASK-201', title: 'Complete foundation piling on east bank', status: 'Done', dueDate: '2024-07-10' },
       { id: 'TASK-202', title: 'Pour concrete for main support columns', status: 'In Progress', dueDate: '2024-07-30' },
       { id: 'TASK-203', title: 'Await delivery of prefabricated deck segments', status: 'To Do', dueDate: '2024-08-05' },
-    ]
+    ],
+    assignedContractors: ['CONT-02']
   },
   { 
     id: 'PROJ-003', 
@@ -95,7 +99,8 @@ export const projects: Project[] = [
       { id: 'TASK-301', title: 'Finalize landscaping and exterior lighting', status: 'In Progress', dueDate: '2024-08-05' },
       { id: 'TASK-302', title: 'Conduct final unit inspections and punch lists', status: 'In Progress', dueDate: '2024-08-20' },
       { id: 'TASK-303', title: 'Obtain certificate of occupancy', status: 'To Do', dueDate: '2024-08-30' },
-    ]
+    ],
+    assignedContractors: ['CONT-01', 'CONT-02', 'CONT-04']
   },
   { 
     id: 'PROJ-004', 
@@ -108,7 +113,8 @@ export const projects: Project[] = [
     tasks: [
       { id: 'TASK-401', title: 'Install new playground equipment', status: 'Done', dueDate: '2024-06-15' },
       { id: 'TASK-402', title: 'Complete final project handover', status: 'Done', dueDate: '2024-07-01' },
-    ]
+    ],
+    assignedContractors: []
   },
 ];
 
@@ -130,7 +136,7 @@ export const alerts: Alert[] = [
   { id: 'ALERT-01', type: 'delay', title: 'Potential Delay Detected', description: 'Foundation work is 5 days behind schedule due to material delivery issues.', projectId: 'PROJ-002', date: '2024-07-28T10:00:00Z', read: false },
   { id: 'ALERT-02', type: 'stock', title: 'Low Stock: Cement', description: 'Stock for cement is below the 15% threshold. Reorder is recommended.', projectId: 'PROJ-001', date: '2024-07-27T14:30:00Z', read: false },
   { id: 'ALERT-03', type: 'payment', title: 'Overdue Payment', description: 'Invoice INV-1024 to Innovate Construct is 3 days overdue.', projectId: 'PROJ-002', date: '2024-07-26T09:00:00Z', read: true },
-  { id: 'ALERT-04', type: 'safety', title: 'Safety Inspection Required', description: 'Upcoming safety inspection for scaffolding on floor 15.', projectId: 'PROJ-001', date: '2024-07-25T11:00:00Z', read: true },
+  { id: 'ALERT-04', type: 'safety', title: 'Upcoming safety inspection required', description: 'Upcoming safety inspection for scaffolding on floor 15.', projectId: 'PROJ-001', date: '2024-07-25T11:00:00Z', read: true },
 ];
 
 export const recentActivities: RecentActivity[] = [
@@ -139,5 +145,3 @@ export const recentActivities: RecentActivity[] = [
   { id: 3, user: 'System', action: 'generated a low stock alert for Steel Beams.', time: '2024-07-28T09:00:00Z' },
   { id: 4, user: 'Jane Smith', action: 'updated task "Electrical Wiring" to Completed.', time: '2024-07-27T16:00:00Z' },
 ];
-
-    

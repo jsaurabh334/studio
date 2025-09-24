@@ -1,3 +1,4 @@
+
 import { notFound } from "next/navigation";
 import { projects } from "@/lib/data";
 import { ProjectHeader } from "./project-header";
@@ -16,8 +17,6 @@ export default function ProjectDetailsPage({
   if (!project) {
     notFound();
   }
-
-  const activeContractors = 3; // Mock data
 
   return (
     <div className="flex flex-col gap-8">
@@ -62,7 +61,7 @@ export default function ProjectDetailsPage({
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{activeContractors}</div>
+            <div className="text-2xl font-bold">+{project.assignedContractors.length}</div>
             <p className="text-xs text-muted-foreground">
               Working on this project
             </p>

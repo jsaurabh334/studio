@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -25,14 +26,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
 import type { Project } from "@/lib/data";
 import { useToast } from "@/hooks/use-toast";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import { contractors } from "@/lib/data";
+import { Badge } from "@/components/ui/badge";
 
 const ProjectFormSchema = z.object({
   name: z.string().min(3, "Project name must be at least 3 characters."),
   description: z.string().min(10, "Description must be at least 10 characters."),
   budget: z.coerce.number().min(1000, "Budget must be at least $1,000."),
+  assignedContractors: z.array(z.string()).default([]),
 });
 
 type ProjectFormValues = z.infer<typeof ProjectFormSchema>;
@@ -48,6 +55,7 @@ export function ProjectForm({ project }: { project?: Project }) {
       name: project?.name || "",
       description: project?.description || "",
       budget: project?.budget || 0,
+      assignedContractors: project?.assignedContractors || [],
     },
   });
 
@@ -57,6 +65,7 @@ export function ProjectForm({ project }: { project?: Project }) {
     // To simulate, we'll just show a success message and redirect.
     await new Promise(resolve => setTimeout(resolve, 1000));
     
+    console.log("Submitted values:", values);
     toast({
         title: project ? "Project Updated!" : "Project Created!",
         description: `The project "${values.name}" has been successfully saved.`,
@@ -122,6 +131,75 @@ export function ProjectForm({ project }: { project?: Project }) {
                   <FormControl>
                     <Input type="number" placeholder="e.g., 5000000" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="assignedContractors"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Assign Contractors</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value?.length && "text-muted-foreground"
+                          )}
+                        >
+                           <div className="flex gap-1 flex-wrap">
+                            {field.value?.length > 0 ? field.value.map(contractorId => (
+                                <Badge variant="secondary" key={contractorId}>
+                                    {contractors.find(c => c.id === contractorId)?.name}
+                                </Badge>
+                            )) : "Select contractors"}
+                           </div>
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search contractors..." />
+                        <CommandList>
+                            <CommandEmpty>No contractors found.</CommandEmpty>
+                            <CommandGroup>
+                            {contractors.map((contractor) => (
+                                <CommandItem
+                                key={contractor.id}
+                                value={contractor.name}
+                                onSelect={() => {
+                                    const selected = field.value || [];
+                                    const newSelection = selected.includes(contractor.id)
+                                    ? selected.filter((id) => id !== contractor.id)
+                                    : [...selected, contractor.id];
+                                    field.onChange(newSelection);
+                                }}
+                                >
+                                <Check
+                                    className={cn(
+                                    "mr-2 h-4 w-4",
+                                    (field.value || []).includes(contractor.id)
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                />
+                                {contractor.name}
+                                </CommandItem>
+                            ))}
+                            </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormDescription>
+                    Select one or more contractors to assign to this project.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
