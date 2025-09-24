@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import bcrypt from 'bcryptjs';
+import clientPromise from '@/lib/mongodb';
 
 const signupSchema = z.object({
   name: z.string().min(2),
@@ -9,24 +11,39 @@ const signupSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const client = await clientPromise;
+    const db = client.db();
+
     const body = await request.json();
-    const parsedBody = signupSchema.parse(body);
+    const { name, email, password } = signupSchema.parse(body);
 
-    // In a real application, you would:
-    // 1. Check if a user with this email already exists.
-    // 2. Hash the password.
-    // 3. Save the new user to your database.
-    
-    console.log("New user signup:", parsedBody);
+    const existingUser = await db.collection('users').findOne({ email });
+    if (existingUser) {
+      return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
+    }
 
-    // For now, we'll just return a success message.
-    return NextResponse.json({ message: 'User created successfully', user: { name: parsedBody.name, email: parsedBody.email } });
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const result = await db.collection('users').insertOne({
+      name,
+      email,
+      password: hashedPassword,
+      createdAt: new Date(),
+    });
+
+    const user = {
+      id: result.insertedId,
+      name,
+      email,
+    };
+
+    return NextResponse.json({ message: 'User created successfully', user });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
-    // You could add a specific check for duplicate emails here if you were using a database.
+    console.error(error);
     return NextResponse.json({ error: 'Something went wrong' }, { status: 500 });
   }
 }
