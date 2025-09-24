@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   LineChart,
   Users,
+  Settings,
 } from "lucide-react";
 
 import {
@@ -57,6 +58,11 @@ const navItems = [
     href: "/alerts",
     label: "Alerts",
     icon: Bell,
+  },
+   {
+    href: "/settings",
+    label: "Settings",
+    icon: Settings,
   },
 ];
 

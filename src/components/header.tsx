@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Bell,
@@ -33,6 +34,7 @@ const navItems = [
   { href: "/stock", label: "Stock Prediction" },
   { href: "/payments", label: "Payments" },
   { href: "/alerts", label: "Alerts" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export function Header() {
@@ -71,7 +73,9 @@ export function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/settings">Settings</Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>Support</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Logout</DropdownMenuItem>
