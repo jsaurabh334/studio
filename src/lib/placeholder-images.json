@@ -1,3 +1,34 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "avatar-1",
+      "description": "Avatar of a construction worker",
+      "imageUrl": "https://images.unsplash.com/photo-1592651850693-35927d54b4a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGVyc29uJTIwY29uc3RydWN0aW9ufGVufDB8fHx8MTc1ODYzODc0M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person construction"
+    },
+    {
+      "id": "avatar-2",
+      "description": "Avatar of a project manager",
+      "imageUrl": "https://images.unsplash.com/photo-1751594218875-f1d18f8db54d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwZXJzb24lMjBzdWl0fGVufDB8fHx8MTc1ODcxNzYyNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person suit"
+    },
+    {
+      "id": "avatar-3",
+      "description": "Avatar of an architect",
+      "imageUrl": "https://images.unsplash.com/photo-1457986733641-0abe2c60c512?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cGVyc29uJTIwZ2xhc3Nlc3xlbnwwfHx8fDE3NTg2ODA3MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person glasses"
+    },
+    {
+      "id": "avatar-4",
+      "description": "Avatar of an engineer",
+      "imageUrl": "https://images.unsplash.com/photo-1568786880984-e1029f71aa93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwZXJzb24lMjBoZWxtZXR8ZW58MHx8fHwxNzU4NzE3NjI0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person helmet"
+    },
+    {
+      "id": "avatar-5",
+      "description": "Avatar of a female contractor",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3b21hbiUyMHByb2Zlc3Npb25hbHxlbnwwfHx8fDE3NTg3MDQ0NDV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman professional"
+    }
+  ]
 }
