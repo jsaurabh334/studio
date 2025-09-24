@@ -37,6 +37,13 @@ export type Alert = {
   read: boolean;
 };
 
+export type RecentActivity = {
+  id: number;
+  user: string;
+  action: string;
+  time: string;
+};
+
 export const projects: Project[] = [
   { id: 'PROJ-001', name: 'Downtown High-Rise', progress: 75, budget: 5000000, spent: 3750000, status: 'On Track' },
   { id: 'PROJ-002', name: 'Suburban Bridge', progress: 40, budget: 1200000, spent: 600000, status: 'Delayed' },
@@ -65,9 +72,9 @@ export const alerts: Alert[] = [
   { id: 'ALERT-04', type: 'safety', title: 'Safety Inspection Required', description: 'Upcoming safety inspection for scaffolding on floor 15.', projectId: 'PROJ-001', date: '2024-07-25T11:00:00Z', read: true },
 ];
 
-export const recentActivities = [
-  { id: 1, user: 'Supervisor Mark', action: 'submitted daily report for PROJ-001.', time: '2 hours ago' },
-  { id: 2, user: 'Admin', action: 'approved payment for INV-1023.', time: '5 hours ago' },
-  { id: 3, user: 'System', action: 'generated a low stock alert for Steel Beams.', time: '1 day ago' },
-  { id: 4, user: 'Jane Smith', action: 'updated task "Electrical Wiring" to Completed.', time: '2 days ago' },
+export const recentActivities: RecentActivity[] = [
+  { id: 1, user: 'Supervisor Mark', action: 'submitted daily report for PROJ-001.', time: '2024-07-29T14:00:00Z' },
+  { id: 2, user: 'Admin', action: 'approved payment for INV-1023.', time: '2024-07-29T11:00:00Z' },
+  { id: 3, user: 'System', action: 'generated a low stock alert for Steel Beams.', time: '2024-07-28T09:00:00Z' },
+  { id: 4, user: 'Jane Smith', action: 'updated task "Electrical Wiring" to Completed.', time: '2024-07-27T16:00:00Z' },
 ];

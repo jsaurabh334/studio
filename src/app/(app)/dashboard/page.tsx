@@ -20,14 +20,17 @@ import {
   Users,
   Activity,
 } from "lucide-react";
-import { projects, recentActivities } from "@/lib/data";
+import { projects, recentActivities, contractors } from "@/lib/data";
 import { ProjectProgressChart } from "./charts";
 import { Badge } from "@/components/ui/badge";
+import { formatDistanceToNow } from "date-fns";
 
 const totalBudget = projects.reduce((sum, p) => sum + p.budget, 0);
 const totalSpent = projects.reduce((sum, p) => sum + p.spent, 0);
 const overallProgress =
   projects.reduce((sum, p) => sum + p.progress, 0) / projects.length;
+const activeContractors = contractors.filter(c => c.status === 'Active').length;
+
 
 export default function DashboardPage() {
   return (
@@ -89,7 +92,7 @@ export default function DashboardPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+12</div>
+            <div className="text-2xl font-bold">+{activeContractors}</div>
             <p className="text-xs text-muted-foreground">
               Working on current projects
             </p>
@@ -107,36 +110,33 @@ export default function DashboardPage() {
         </Card>
         <Card className="col-span-1 lg:col-span-3">
           <CardHeader>
-            <CardTitle>Projects</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Recent Activity
+            </CardTitle>
             <CardDescription>
-              A list of your recent projects.
+              What's been happening across your projects.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Progress</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {projects.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell className="font-medium">{project.name}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={project.status === 'Completed' ? 'default' : project.status === 'On Track' ? 'secondary' : 'destructive'} 
-                        className={project.status === 'On Track' ? 'bg-accent/80 text-accent-foreground' : ''}>
-                        {project.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">{project.progress}%</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="space-y-4">
+              {recentActivities.map((activity) => (
+                <div key={activity.id} className="flex items-start gap-4">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary">
+                    <Activity className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm">
+                      <span className="font-semibold">{activity.user}</span>{" "}
+                      {activity.action}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatDistanceToNow(new Date(activity.time), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>
