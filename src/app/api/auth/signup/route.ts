@@ -1,54 +1,47 @@
-import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import bcrypt from 'bcryptjs';
-import clientPromise from '@/lib/mongodb';
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import clientPromise from "@/lib/mongodb";
 
 const signupSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters.'),
-  email: z.string().email('Please enter a valid email address.'),
-  password: z.string().min(6, 'Password must be at least 6 characters.'),
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
 });
 
 export async function POST(request: Request) {
   try {
+    const body = await request.json();
+    console.log("SIGNUP body:", body);
+    const { name, email, password } = signupSchema.parse(body);
+
     const client = await clientPromise;
     const db = client.db();
 
-    const body = await request.json();
-    const { name, email, password } = signupSchema.parse(body);
-
-    const existingUser = await db.collection('users').findOne({ email });
+    const existingUser = await db.collection("users").findOne({ email });
     if (existingUser) {
-      return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
+      return NextResponse.json({ error: "User with this email already exists." }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const result = await db.collection('users').insertOne({
+    const result = await db.collection("users").insertOne({
       name,
       email,
       password: hashedPassword,
-      role: 'Admin', // Default role for new users
       createdAt: new Date(),
     });
 
-    const user = {
-      _id: result.insertedId,
-      name,
-      email,
-      role: 'Admin',
-    };
-    
-    // In a real app, you would create a session/JWT here.
+    return NextResponse.json({
+      message: "Signup successful",
+      user: { id: result.insertedId.toString(), name, email },
+    }, { status: 201 });
 
-    return NextResponse.json({ message: 'User created successfully', user }, { status: 201 });
-
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
+  } catch (err: any) {
+    console.error("SIGNUP error:", err);
+    if (err instanceof z.ZodError) {
+      return NextResponse.json({ error: err.errors.map(e => e.message).join(", ") }, { status: 400 });
     }
-    // Do not log the error here as it can cause secondary crashes on some platforms.
-    // The hosting environment should handle logging.
-    return NextResponse.json({ error: 'An internal server error occurred.' }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+// After successful signup, you might want to log the user in automatically.

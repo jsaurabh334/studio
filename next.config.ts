@@ -1,4 +1,4 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https' ,
+        protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
@@ -32,6 +32,16 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['@genkit-ai/googleai'],
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Stub Node.js modules that should not be included in client build
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        async_hooks: false,
+      };
+    }
+    return config;
   },
 };
 
