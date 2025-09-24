@@ -16,7 +16,13 @@ import {
 } from "@/components/ui/table";
 import { payments } from "@/lib/data";
 import { CircleDollarSign, Landmark, Package } from "lucide-react";
-import { PaymentChart } from "./payment-chart";
+import dynamic from 'next/dynamic';
+
+const PaymentChart = dynamic(() => import('./payment-chart').then(mod => mod.PaymentChart), {
+  ssr: false,
+  loading: () => <div className="h-[300px] w-full flex items-center justify-center"><p>Loading chart...</p></div>,
+});
+
 
 const totalPaid = payments
   .filter((p) => p.status === "Paid")
@@ -37,7 +43,7 @@ export default function PaymentsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
+            <CardTitle>Total Paid</CardTitle>
             <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -49,7 +55,7 @@ export default function PaymentsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle>
               Total Outstanding
             </CardTitle>
             <Landmark className="h-4 w-4 text-muted-foreground" />

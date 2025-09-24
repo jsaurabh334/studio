@@ -153,11 +153,15 @@ export function ProjectForm({ project }: { project?: Project }) {
                           )}
                         >
                            <div className="flex gap-1 flex-wrap">
-                            {field.value?.length > 0 ? field.value.map(contractorId => (
-                                <Badge variant="secondary" key={contractorId}>
-                                    {contractors.find(c => c.id === contractorId)?.name}
-                                </Badge>
-                            )) : "Select contractors"}
+                            {field.value?.length > 0 ? 
+                                field.value.map(contractorId => {
+                                    const contractor = contractors.find(c => c.id === contractorId);
+                                    return (
+                                        <Badge variant="secondary" key={contractorId}>
+                                            {contractor?.name || 'Unknown'}
+                                        </Badge>
+                                    );
+                                }) : "Select contractors"}
                            </div>
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>

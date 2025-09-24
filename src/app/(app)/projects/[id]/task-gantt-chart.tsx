@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { Task } from "@/lib/data";
 import { generateTasksForGoal } from "@/ai/flows/generate-tasks-flow";
 import { addDays, differenceInDays, format, parseISO } from 'date-fns';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList, Cell } from 'recharts';
 import {
   Card,
   CardContent,
@@ -21,7 +21,7 @@ import { PlusCircle, Sparkles, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 
-const statusColors = {
+const statusColors: Record<Task['status'], string> = {
   "To Do": "hsl(var(--chart-3))",
   "In Progress": "hsl(var(--chart-2))",
   "Done": "hsl(var(--chart-1))",
@@ -29,13 +29,14 @@ const statusColors = {
 
 // Helper to prepare data for the chart
 const prepareChartData = (tasks: Task[]) => {
+  if (tasks.length === 0) return [];
   const sortedTasks = [...tasks].sort((a, b) => parseISO(a.dueDate).getTime() - parseISO(b.dueDate).getTime());
-  const projectStartDate = sortedTasks.length > 0 ? parseISO(sortedTasks[0].dueDate) : new Date();
+  const projectStartDate = parseISO(sortedTasks[0].dueDate);
 
   return sortedTasks.map(task => {
     const startDate = parseISO(task.dueDate);
     // Assuming a fixed duration for visualization purposes
-    const duration = task.status === 'Done' ? 7 : 10; 
+    const duration = 10; 
     const endDate = addDays(startDate, duration);
     
     const startDay = differenceInDays(startDate, projectStartDate);
@@ -152,25 +153,32 @@ export function TaskGanttChart({ tasks: initialTasks }: { tasks: Task[] }) {
       <CardContent>
         <ChartContainer config={{}} className="h-[400px] w-full">
             <ResponsiveContainer>
+              {tasks.length > 0 ? (
                 <BarChart
                     layout="vertical"
                     data={chartData}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                    barCategoryGap="20%"
                 >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                     <XAxis type="number" domain={['dataMin', 'dataMax + 2']} unit=" days" />
-                    <YAxis dataKey="name" type="category" width={150} tick={{ fontSize: 12 }} />
+                    <YAxis dataKey="name" type="category" width={150} tick={{ fontSize: 12 }} interval={0} />
                     <Tooltip
                         content={<ChartTooltipContent />}
                         cursor={{fill: 'hsl(var(--muted))'}}
                     />
-                    <Bar dataKey="range" stackId="a">
-                        {chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={statusColors[entry.status as keyof typeof statusColors]} />
+                    <Bar dataKey="range" minPointSize={5}>
+                        <LabelList dataKey="name" position="insideLeft" style={{ fill: 'white' }} fontSize={12} />
+                        {chartData.map((entry) => (
+                            <Cell key={`cell-${entry.name}`} fill={statusColors[entry.status as keyof typeof statusColors]} />
                         ))}
-                         <LabelList dataKey="name" position="insideLeft" style={{ fill: 'white' }} fontSize={12} />
                     </Bar>
                 </BarChart>
+              ) : (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                    No tasks yet. Add a task to see the chart.
+                </div>
+              )}
             </ResponsiveContainer>
         </ChartContainer>
       </CardContent>

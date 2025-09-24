@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -21,7 +22,6 @@ import {
   Activity,
 } from "lucide-react";
 import { projects, recentActivities, contractors } from "@/lib/data";
-import { ProjectProgressChart } from "./charts";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
@@ -29,6 +29,13 @@ import { buttonVariants } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import dynamic from 'next/dynamic';
+
+const ProjectProgressChart = dynamic(() => import('./charts').then(mod => mod.ProjectProgressChart), {
+  ssr: false,
+  loading: () => <div className="h-[350px] w-full flex items-center justify-center"><p>Loading chart...</p></div>,
+});
+
 
 const totalBudget = projects.reduce((sum, p) => sum + p.budget, 0);
 const totalSpent = projects.reduce((sum, p) => sum + p.spent, 0);
@@ -49,7 +56,7 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+            <CardTitle>Total Projects</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -61,7 +68,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle>
               Budget vs. Actual
             </CardTitle>
             <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
@@ -77,7 +84,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle>
               Overall Progress
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -91,7 +98,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle>
               Active Contractors
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />

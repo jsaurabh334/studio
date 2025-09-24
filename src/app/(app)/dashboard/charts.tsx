@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -41,7 +42,10 @@ export function ProjectProgressChart() {
             tickFormatter={(value) => value.slice(0, 3)}
           />
           <YAxis unit="%" />
-          <Tooltip content={<ChartTooltipContent />} />
+          <Tooltip 
+            cursor={{ fill: "hsl(var(--muted))" }}
+            content={<ChartTooltipContent />} 
+          />
           <Bar dataKey="progress" fill="var(--color-progress)" radius={4} />
         </BarChart>
       </ResponsiveContainer>

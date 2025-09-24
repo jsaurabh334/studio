@@ -1,11 +1,21 @@
 
 import { notFound } from "next/navigation";
-import { projects } from "@/lib/data";
+import { contractors, projects } from "@/lib/data";
 import { ProjectHeader } from "./project-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleDollarSign, TrendingUp, Users } from "lucide-react";
-import { TaskGanttChart } from "./task-gantt-chart";
-import { ProjectSummary } from "./project-summary";
+import dynamic from "next/dynamic";
+import { Badge } from "@/components/ui/badge";
+
+const TaskGanttChart = dynamic(() => import("./task-gantt-chart").then(mod => mod.TaskGanttChart), {
+  ssr: false,
+  loading: () => <div className="h-[400px] w-full flex items-center justify-center"><p>Loading chart...</p></div>,
+});
+
+const ProjectSummary = dynamic(() => import("./project-summary").then(mod => mod.ProjectSummary), {
+  ssr: false,
+  loading: () => <div className="h-[200px] w-full flex items-center justify-center"><p>Loading summary...</p></div>,
+});
 
 export default function ProjectDetailsPage({
   params,
@@ -18,6 +28,10 @@ export default function ProjectDetailsPage({
     notFound();
   }
 
+  const assignedContractorDetails = project.assignedContractors.map(id => 
+    contractors.find(c => c.id === id)
+  ).filter(Boolean); // Filter out any undefined if a contractor ID is invalid
+
   return (
     <div className="flex flex-col gap-8">
       <ProjectHeader project={project} />
@@ -25,7 +39,7 @@ export default function ProjectDetailsPage({
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle>
               Budget vs. Actual
             </CardTitle>
             <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
@@ -41,7 +55,7 @@ export default function ProjectDetailsPage({
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle>
               Project Progress
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -55,16 +69,18 @@ export default function ProjectDetailsPage({
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+            <CardTitle>
               Assigned Contractors
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">+{project.assignedContractors.length}</div>
-            <p className="text-xs text-muted-foreground">
-              Working on this project
-            </p>
+            <div className="text-xs text-muted-foreground flex flex-wrap gap-1 mt-1">
+                {assignedContractorDetails.map(c => c && (
+                    <Badge key={c.id} variant="secondary">{c.name}</Badge>
+                ))}
+            </div>
           </CardContent>
         </Card>
       </div>

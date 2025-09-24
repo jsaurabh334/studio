@@ -5,15 +5,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { projects, contractors, payments } from "@/lib/data";
+import { projects } from "@/lib/data";
 import { DollarSign, Percent, Briefcase } from "lucide-react";
-import { BudgetSpentChart, TaskStatusChart } from "./charts";
+import dynamic from "next/dynamic";
+
+const BudgetSpentChart = dynamic(() => import('./charts').then(mod => mod.BudgetSpentChart), {
+  ssr: false,
+  loading: () => <div className="h-[350px] w-full flex items-center justify-center"><p>Loading chart...</p></div>,
+});
+const TaskStatusChart = dynamic(() => import('./charts').then(mod => mod.TaskStatusChart), {
+  ssr: false,
+  loading: () => <div className="h-[350px] w-full flex items-center justify-center"><p>Loading chart...</p></div>,
+});
 
 const totalBudget = projects.reduce((sum, p) => sum + p.budget, 0);
 const totalSpent = projects.reduce((sum, p) => sum + p.spent, 0);
-const budgetUtilization = (totalSpent / totalBudget) * 100;
+const budgetUtilization = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0;
 const onTrackProjects = projects.filter(p => p.status === 'On Track').length;
-const onTrackPercentage = (onTrackProjects / projects.length) * 100;
+const onTrackPercentage = projects.length > 0 ? (onTrackProjects / projects.length) * 100 : 0;
 
 export default function ReportsPage() {
   return (
@@ -28,7 +37,7 @@ export default function ReportsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Budget vs Spent</CardTitle>
+            <CardTitle>Total Budget vs Spent</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -40,7 +49,7 @@ export default function ReportsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Projects On Track</CardTitle>
+            <CardTitle>Projects On Track</CardTitle>
             <Briefcase className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -52,11 +61,11 @@ export default function ReportsPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Project Progress</CardTitle>
+            <CardTitle>Average Project Progress</CardTitle>
             <Percent className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{ (projects.reduce((acc, p) => acc + p.progress, 0) / projects.length).toFixed(0) }%</div>
+            <div className="text-2xl font-bold">{ projects.length > 0 ? (projects.reduce((acc, p) => acc + p.progress, 0) / projects.length).toFixed(0) : 0 }%</div>
             <p className="text-xs text-muted-foreground">
                 Average completion across all projects
             </p>
