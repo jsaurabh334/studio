@@ -4,9 +4,9 @@ import bcrypt from 'bcryptjs';
 import clientPromise from '@/lib/mongodb';
 
 const signupSchema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(6),
+  name: z.string().min(2, 'Name must be at least 2 characters.'),
+  email: z.string().email('Please enter a valid email address.'),
+  password: z.string().min(6, 'Password must be at least 6 characters.'),
 });
 
 export async function POST(request: Request) {
@@ -38,12 +38,14 @@ export async function POST(request: Request) {
       email,
       role: 'Admin',
     };
+    
+    // In a real app, you would create a session/JWT here.
 
     return NextResponse.json({ message: 'User created successfully', user }, { status: 201 });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
     console.error('Signup API Error:', error);
     return NextResponse.json({ error: 'An internal server error occurred.' }, { status: 500 });

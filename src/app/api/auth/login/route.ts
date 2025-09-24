@@ -16,21 +16,10 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
 
-    const user = await db.collection('users').findOne(
-        { email },
-        // Explicitly project the password field to ensure it's returned
-        { projection: { name: 1, email: 1, password: 1, role: 1 } }
-    );
+    const user = await db.collection('users').findOne({ email });
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
-    }
-
-    // Ensure user.password is a string before comparing
-    if (typeof user.password !== 'string') {
-        // This case should ideally not happen if data integrity is maintained
-        console.error("User password is not a string for user:", email);
-        return NextResponse.json({ error: 'Authentication error' }, { status: 500 });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -49,7 +38,7 @@ export async function POST(request: Request) {
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
     console.error('Login API Error:', error);
     return NextResponse.json({ error: 'An internal server error occurred.' }, { status: 500 });
