@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import clientPromise from '@/lib/mongodb';
+import { projects as initialProjects } from '@/lib/data';
 
 const signupSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -17,9 +18,22 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { name, email, password } = signupSchema.parse(body);
 
-    const existingUser = await db.collection('users').findOne({ email });
+    const usersCollection = db.collection('users');
+    const existingUser = await usersCollection.findOne({ email });
     if (existingUser) {
       return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
+    }
+
+    // Seed database with projects if this is the first user
+    const userCount = await usersCollection.countDocuments();
+    if (userCount === 0) {
+        const projectsCollection = db.collection('projects');
+        const projectCount = await projectsCollection.countDocuments();
+        if (projectCount === 0) {
+            // Remove the MongoDB "_id" if it exists, as MongoDB will generate it.
+            const projectsToInsert = initialProjects.map(({ ...rest }) => rest);
+            await projectsCollection.insertMany(projectsToInsert);
+        }
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,13 +47,11 @@ export async function POST(request: Request) {
     });
 
     const user = {
-      _id: result.insertedId,
+      id: result.insertedId,
       name,
       email,
       role: 'Admin',
     };
-    
-    // In a real app, you would create a session/JWT here.
 
     return NextResponse.json({ message: 'User created successfully', user }, { status: 201 });
 
@@ -48,7 +60,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.errors[0].message }, { status: 400 });
     }
     // Do not log the error here as it can cause secondary crashes on some platforms.
-    // The hosting environment should handle logging.
     return NextResponse.json({ error: 'An internal server error occurred.' }, { status: 500 });
   }
 }

@@ -18,6 +18,7 @@ export async function POST(request: Request) {
 
     const user = await db.collection('users').findOne(
         { email },
+        // Explicitly project the password field to ensure it is returned
         { projection: { _id: 1, name: 1, email: 1, password: 1, role: 1 } }
     );
 
@@ -45,7 +46,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid request payload' }, { status: 400 });
     }
     // Do not log the error here as it can cause secondary crashes on some platforms.
-    // The hosting environment should handle logging.
     return NextResponse.json({ error: 'An internal server error occurred.' }, { status: 500 });
   }
 }
