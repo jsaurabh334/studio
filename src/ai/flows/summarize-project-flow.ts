@@ -7,7 +7,7 @@
  * - SummarizeProjectOutput - The return type for the summarizeProject function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '@/ai/init';
 import {z} from 'genkit';
 
 const TaskSchema = z.object({

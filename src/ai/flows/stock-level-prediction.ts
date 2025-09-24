@@ -8,7 +8,7 @@
  * - PredictStockDepletionOutput - The return type for the predictStockDepletion function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai} from '@/ai/init';
 import {z} from 'genkit';
 
 const PredictStockDepletionInputSchema = z.object({
