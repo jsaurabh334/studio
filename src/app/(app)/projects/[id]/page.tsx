@@ -4,6 +4,7 @@ import { ProjectHeader } from "./project-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CircleDollarSign, TrendingUp, Users } from "lucide-react";
 import { TaskList } from "./task-list";
+import { ProjectSummary } from "./project-summary";
 
 export default function ProjectDetailsPage({
   params,
@@ -73,7 +74,7 @@ export default function ProjectDetailsPage({
         <div className="lg:col-span-2">
             <TaskList tasks={project.tasks} />
         </div>
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex flex-col gap-8">
             <Card>
                 <CardHeader>
                     <CardTitle>About Project</CardTitle>
@@ -82,10 +83,9 @@ export default function ProjectDetailsPage({
                     <p className="text-sm text-muted-foreground">{project.description}</p>
                 </CardContent>
             </Card>
+            <ProjectSummary project={project} />
         </div>
       </div>
     </div>
   );
 }
-
-    
